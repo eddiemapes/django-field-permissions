@@ -1,3 +1,10 @@
 Scripts
 lib
 include
+pyvenv.cfg
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
