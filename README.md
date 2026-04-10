@@ -1,6 +1,6 @@
 # django-field-permissions
 
-Django's built-in permission system works at the model level — a user can either access a model or they can't. There's no built-in way to say "this user can see the `email` field but not edit it." **django-field-permissions** fills that gap by adding field-level `read` and `edit` permissions that can be assigned to individual users or groups.
+Django's built-in permission system works at the model level — a user can either access a model or they can't. There's isn't a built-in way to say "this user can see the `email` field but not edit it." **django-field-permissions** fills that gap by adding field-level `read` and `edit` permissions that can be assigned to individual users or groups.
 
 [![PyPI version](https://img.shields.io/pypi/v/django-field-permissions)](https://pypi.org/project/django-field-permissions/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -15,6 +15,7 @@ django-field-permissions introduces a `FieldPermission` model that maps a model 
 
 - Per-field `read` and `edit` access levels
 - Assign permissions to individual users, groups, or both
+- Check a user's field permissions in the template or backend
 - Superusers automatically pass all permission checks
 - Middleware-driven — resolved permissions are available on every request via `request.field_perms`
 - Built-in caching with automatic invalidation via Django signals
@@ -70,30 +71,8 @@ python manage.py sync_field_permissions
 
 This creates one `read` record and one `edit` record in the database for every field on every model listed in `FIELD_PERMISSIONS_ALLOWED_MODELS`.
 
+
 **5. Assign permissions in the Django admin:**
-
-Go to **Field Permissions** in the admin and add users or groups to the appropriate records.
-
-**6. Check permissions in templates:**
-
-```django
-{% load field_permissions %}
-
-{% if request|has_field_perm:"mymodel,email,read" %}
-    {{ user.email }}
-{% endif %}
-```
-
-**7. Check permissions in views:**
-
-```python
-from field_permissions.permissions import has_field_perm
-
-def my_view(request):
-    if has_field_perm(request, 'mymodel', 'email', 'edit'):
-        # allow edit
-        pass
-```
 
 **Optional — wire up admin mixins to manage permissions from the User or Group admin pages:**
 
@@ -116,6 +95,34 @@ admin.site.register(Group, MyGroupAdmin)
 ```
 
 ---
+
+Go to **Field Permissions** in the admin and add users or groups to the appropriate records. 
+
+Otherwise permission records can be created via SQL / Django Shell.
+
+
+**6. Check permissions in templates:**
+
+```django
+{% load field_permissions %}
+
+{% if request|has_field_perm:"mymodel,email,read" %}
+    {{ user.email }}
+{% endif %}
+```
+
+
+**7. Check permissions in views:**
+
+```python
+from field_permissions.permissions import has_field_perm
+
+def my_view(request):
+    if has_field_perm(request, 'mymodel', 'email', 'edit'):
+        # allow edit
+        pass
+```
+
 
 ## Configuration
 
