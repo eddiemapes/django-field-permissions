@@ -5,22 +5,20 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "django-field-permissions"
 version = "0.1.0"
+authors = [
+    { name="Eddie Mapes", email="1999eddiem@gmail.com" },
+]
 description = "A Django package for implementing field-level permissions on model fields."
+license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "Django>=4.2",
 ]
 classifiers = [
+    "License :: OSI Approved :: MIT License",
     "Framework :: Django",
-    "Framework :: Django :: 4.2",
-    "Framework :: Django :: 5.0",
-    "Framework :: Django :: 5.1",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
 ]
 
 [project.urls]
