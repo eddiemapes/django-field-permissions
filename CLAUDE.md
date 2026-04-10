@@ -6,7 +6,7 @@ This is a reusable Django package for creating field-level permissions for datab
 The package name is django-field-permissions. The internal django app name is field_permissions.
 
 ## Reference Repository
-The primary repository to reference for existing field-level permissions code is located at C:\Users\EddieMapes\OneDrive - Healthcare Revenue Solutions\backup
+The primary repository to reference for existing field-level permissions code is located at C:\Users\Eddie Mapes\Desktop\Vetting App
 The key files in this repository to reference are:
 - vetapp/settings.py
 - vetapp/environment_processor.py
