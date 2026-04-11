@@ -1,20 +1,17 @@
 from django import forms
-from django.contrib import admin
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from field_permissions.models import FieldPermission
 
 
-@admin.register(FieldPermission)
-class FieldPermissionAdmin(admin.ModelAdmin):
-    list_display = ('model_name', 'field_name', 'access_level', 'display_name')
-    list_filter = ('model_name', 'access_level')
-    search_fields = ('model_name', 'field_name')
-    filter_horizontal = ('users', 'groups')
-
-
 class FieldPermissionUserAdminMixin:
+    def get_fields(self, request, obj=None):
+        return [f for f in super().get_fields(request, obj) if f != 'field_permissions']
+
     def get_form(self, request, obj=None, **kwargs):
+        fields = kwargs.get('fields')
+        if fields is not None:
+            kwargs['fields'] = [f for f in fields if f != 'field_permissions']
         form = super().get_form(request, obj, **kwargs)
 
         field_perms_field = forms.ModelMultipleChoiceField(
@@ -31,10 +28,11 @@ class FieldPermissionUserAdminMixin:
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj)
-        fieldsets = list(fieldsets) + [
-            ('Field Permissions', {'fields': ('field_permissions',)}),
+        cleaned = [
+            (name, {**options, 'fields': tuple(f for f in options.get('fields', ()) if f != 'field_permissions')})
+            for name, options in fieldsets
         ]
-        return fieldsets
+        return cleaned + [('Field Permissions', {'fields': ('field_permissions',)})]
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
@@ -50,7 +48,13 @@ class FieldPermissionUserAdminMixin:
 
 
 class FieldPermissionGroupAdminMixin:
+    def get_fields(self, request, obj=None):
+        return [f for f in super().get_fields(request, obj) if f != 'field_permissions']
+
     def get_form(self, request, obj=None, **kwargs):
+        fields = kwargs.get('fields')
+        if fields is not None:
+            kwargs['fields'] = [f for f in fields if f != 'field_permissions']
         form = super().get_form(request, obj, **kwargs)
 
         field_perms_field = forms.ModelMultipleChoiceField(
@@ -67,10 +71,11 @@ class FieldPermissionGroupAdminMixin:
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj)
-        fieldsets = list(fieldsets) + [
-            ('Field Permissions', {'fields': ('field_permissions',)}),
+        cleaned = [
+            (name, {**options, 'fields': tuple(f for f in options.get('fields', ()) if f != 'field_permissions')})
+            for name, options in fieldsets
         ]
-        return fieldsets
+        return cleaned + [('Field Permissions', {'fields': ('field_permissions',)})]
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
