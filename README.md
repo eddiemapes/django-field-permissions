@@ -1,6 +1,6 @@
 # django-field-permissions
 
-Django's built-in permission system works at the model level — a user can either access a model or they can't. There's isn't a built-in way to say "this user can see the `email` field but not edit it." **django-field-permissions** fills that gap by adding field-level `read` and `edit` permissions that can be assigned to individual users or groups.
+Django's built-in permission system works at the model level — a user can either access a model or they can't. There isn't a built-in way to say "this user can see the `email` field but not edit it" without a custom implementation. **django-field-permissions** fills that gap by adding field-level `read` and `edit` permissions that can be assigned to individual users or groups.
 
 [![PyPI version](https://img.shields.io/pypi/v/django-field-permissions)](https://pypi.org/project/django-field-permissions/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -9,14 +9,14 @@ Django's built-in permission system works at the model level — a user can eith
 
 ## Overview
 
-django-field-permissions introduces a `FieldPermission` model that maps a model field to an access level (`read` or `edit`) and a set of users and/or groups. A middleware resolves the current user's permissions on every request and attaches them to `request.field_perms`. A template tag and a utility function let you check those permissions anywhere in your templates or views.
+django-field-permissions introduces a `FieldPermission` model that maps model fields to an access level (`read` or `edit`) and a set of users and/or groups. A middleware resolves the current user's permissions on every request and attaches them to `request.field_perms`. A template tag and utility function let you check those permissions anywhere in your templates or views.
 
 **Key features:**
 
 - Per-field `read` and `edit` access levels
 - Assign permissions to individual users, groups, or both
 - Check a user's field permissions in the template or backend
-- Superusers automatically pass all permission checks
+- Superusers automatically pass all permission checks, following Django convention
 - Middleware-driven — resolved permissions are available on every request via `request.field_perms`
 - Built-in caching with automatic invalidation via Django signals
 - Django admin integration for managing permissions through the UI
@@ -96,7 +96,7 @@ admin.site.register(Group, MyGroupAdmin)
 
 ---
 
-Go to **Field Permissions** in the admin and add users or groups to the appropriate records. 
+A field permissions **FilteredSelectMultiple** widget is added to the **User** and **Group** edit and create pages in Django admin.
 
 Otherwise permission records can be created via SQL / Django Shell.
 
@@ -105,6 +105,9 @@ Otherwise permission records can be created via SQL / Django Shell.
 
 ```django
 {% load field_permissions %}
+
+# Format: request|has_field_perm:"model_name,field_name,access_level
+# Returns True/False
 
 {% if request|has_field_perm:"mymodel,email,read" %}
     {{ user.email }}
@@ -118,6 +121,9 @@ Otherwise permission records can be created via SQL / Django Shell.
 from field_permissions.permissions import has_field_perm
 
 def my_view(request):
+    # Format: has_field_perm(request, 'model_name', 'field_name', 'access_level')
+    # Returns True/False
+
     if has_field_perm(request, 'mymodel', 'email', 'edit'):
         # allow edit
         pass
@@ -126,7 +132,7 @@ def my_view(request):
 
 ## Configuration
 
-All settings are optional. Add any of the following to your `settings.py`:
+All settings are optional, add any of the following to your `settings.py`:
 
 | Setting | Default | Description |
 |---|---|---|
