@@ -8,7 +8,7 @@ AccessLevel = Literal['read', 'edit']
 def has_field_perm(request: HttpRequest, model_name: str, field_name: str, access_level: AccessLevel) -> bool:
     # Verify access_level
     if access_level not in ['read', 'edit']:
-        raise ValueError(f'Invalid access level {access_level}. Must be "read" or "edit".')
+        raise ValueError(f'Invalid field permission access level "{access_level}". Must be "read" or "edit".')
 
     # Verify model_name 
     if not isinstance(model_name, str):
