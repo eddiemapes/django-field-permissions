@@ -9,7 +9,7 @@ register = template.Library()
 def has_field_perm_filter(request, arg):
     parts = arg.split(',')
     if len(parts) != 3:
-        return False
+        raise ValueError('Invalid parameters for field permissions template tag. Must be in format "model_name,field_name,access_level".')
     model_name = parts[0].strip()
     field_name = parts[1].strip()
     access_level = parts[2].strip()
